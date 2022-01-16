@@ -10,3 +10,15 @@ Lorqu'un véhicule s'approche du péage. Il ne pourra pas passé car la barrièr
 ## Schema
 
 ![](schema.png)
+
+## Arduino
+
+In folder arduino
+
+## Web
+
+In folder src
+
+## Start project
+
+````npm run start````
