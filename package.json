@@ -1,0 +1,19 @@
+{
+  "name": "tollarduino",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./src/app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^4.3.0",
+    "mongoose": "^6.1.6",
+    "serialport": "^9.2.8",
+    "socket.io": "^4.4.1",
+    "ws": "^8.4.2"
+  }
+}
