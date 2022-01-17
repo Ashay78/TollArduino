@@ -57,6 +57,7 @@ wss.on('connection', function (client) {
                     user: user
                 })
                 badging.save();
+                port.write( "1" );
                 break;
         }
     });
@@ -78,9 +79,7 @@ parser.on('data', function(data) {
                 user: user
             })
             badging.save();
-            io.emit('save', badging);
-
-            // TODO renvoyer ok vers l'arduino
+            port.write( "1" );
         }
     })
 
