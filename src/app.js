@@ -9,12 +9,11 @@ const parsers = SerialPort.parsers;
 
 mongooseLoader();
 
-
 const parser = new parsers.Readline({
     delimiter: '\r\n'
 });
 
-const portSerial = new SerialPort('/dev/cu.BoseQC35II',{
+const portSerial = new SerialPort('/dev/cu.usbmodem11401',{
     baudRate: 9600,
     dataBits: 8,
     parity: 'none',
@@ -39,7 +38,6 @@ var wss = new WebSocketServer({
 });
 
 wss.on('connection', function (client) {
-    console.log('connection');
     client.on('message', function (message) {
         let msg = JSON.parse(message);
 
@@ -57,7 +55,7 @@ wss.on('connection', function (client) {
                     user: user
                 })
                 badging.save();
-                port.write( "1" );
+                portSerial.write( "1" );
                 break;
         }
     });
@@ -65,21 +63,28 @@ wss.on('connection', function (client) {
 
 // TODO tester si ca marche
 parser.on('data', function(data) {
-    console.log('Received data from port: ' + data);
+    if (data.includes('ok')) {
+        wss.clients.forEach(function each(client) {
+            client.send(JSON.stringify({type: 'ok'}));
+        });
+        return;
+    }
+    const badge = data.replaceAll(' ', '');
 
-    // TODO changer le badge
-    const badge = "azerty";
     User.findOne({badge: badge}).then(user => {
         if (user === null) {
             wss.clients.forEach(function each(client) {
                 client.send(JSON.stringify({type: 'data', data: badge}));
             });
         } else {
+            wss.clients.forEach(function each(client) {
+                client.send(JSON.stringify({type: 'user', data: user}));
+            });
             let badging = new Badging({
                 user: user
             })
             badging.save();
-            port.write( "1" );
+            portSerial.write("1");
         }
     })
 
