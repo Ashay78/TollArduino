@@ -15,6 +15,8 @@ int sensorTrigPlotId = 3;
 int sensorEchoPlotId = 2;
 Ultrasonic ultrasonic(sensorTrigPlotId, sensorEchoPlotId); //(Trig,Echo)
 
+bool goForward = false;
+
 // Tableau contentent l'ID
 byte nuidPICC[4];
 
@@ -35,10 +37,7 @@ void setup() {
 }
  
 void loop() {
-
-  // CHeck to see if Serial data is being received
-    if (Serial.available() > 0) {
-
+  if (Serial.available() > 0) {
       // Create a new string variable to receive Serial data
       String receivedString = "";
 
@@ -46,26 +45,40 @@ void loop() {
       while (Serial.available() > 0) {
         receivedString += char(Serial.read ());
       }
-
-      // Print received Serial data
-      Serial.println(receivedString);
-
-      if(receivedString == "1")
-        // Ouvrir la porte
-
+   
+      if(receivedString == "1") {
+        goForward = true;
+      }
     }
 
   int distanceInCm = ultrasonic.Ranging(CM);
-  Serial.println(distanceInCm);
-  
+
+  if (goForward) {
+      while(distanceInCm < 20) {
+        distanceInCm = ultrasonic.Ranging(CM);
+        digitalWrite(GREEN_LED, HIGH);
+        digitalWrite(RED_LED, LOW);
+      }
+      if (distanceInCm > 20) {
+        goForward = false;
+        Serial.println("ok");
+      }
+     
+    } else {
+      digitalWrite(GREEN_LED, LOW);
+      digitalWrite(RED_LED, HIGH);
+    }
+ 
+   
   // Initialisé la boucle si aucun badge n'est présent 
+  
   if ( !rfid.PICC_IsNewCardPresent())
     return;
 
   // Vérifier la présence d'un nouveau badge 
   if ( !rfid.PICC_ReadCardSerial())
     return;
-
+  
   // Enregistrer l'ID du badge (4 octets) 
   for (byte i = 0; i < 4; i++) 
   {
@@ -73,29 +86,13 @@ void loop() {
   }
   
   // Affichage de l'ID 
-  Serial.println("Un badge est détecté");
-  Serial.println(" L'UID du tag est:");
   for (byte i = 0; i < 4; i++) 
   {
     Serial.print(nuidPICC[i], HEX);
     Serial.print(" ");
   }
-  Serial.println();
+  Serial.println(" ");
 
-  Serial.println();
-
-  
-
-  // Re-Init RFID
   rfid.PICC_HaltA(); // Halt PICC
   rfid.PCD_StopCrypto1(); // Stop encryption on PCD
-
-  while(distanceInCm < 20) {
-    distanceInCm = ultrasonic.Ranging(CM);
-    digitalWrite(GREEN_LED, HIGH);
-    digitalWrite(RED_LED, LOW);
-    Serial.print(" ");
-  }
-   digitalWrite(GREEN_LED, LOW);
-   digitalWrite(RED_LED, HIGH);
 }

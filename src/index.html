@@ -1,25 +1,12 @@
 <!doctype html>
 <html>
 <head>
-
     <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js'></script>
-
-    <style>
-
-        #sample {
-            background-color: red;
-            width: 300px;
-            height: 300px;
-        }
-
-    </style>
-
 </head>
 <body>
-<h1>Communicating from an Arduino to Node.js</h1>
-<div id="sample"></div>
-<div><p id="badge"></p></div>
-<div id="registration">
+<div id="message">Veuillez scanner</div>
+<div id="registration" style="opacity: 0">
+    <div><p id="badge"></p></div>
     <form action="#" method="post" name="registration" id="form_registration" class="form_class" >
         <label for="firstname">Prenom :</label>
         <input type="text" name="firstname" id="firstname" placeholder="Prenom" />
@@ -30,37 +17,41 @@
 </div>
 
 <script>
-    // TODO supprimer azerty
-    document.getElementById("badge").innerHTML = "azerty";
     const wss = new WebSocket('ws://localhost:3000');
 
-    wss.onopen = (event) => {
-        console.log("We are connected.");
-    };
+    wss.onopen = (event) => {};
 
     wss.onmessage = (event) => {
         let msg = JSON.parse(event.data);
-        console.log(msg);
         switch (msg.type) {
-            case 'registration':
-                document.getElementById("badge").innerHTML = msg.data.badge;
-
-                // TODO Change l'affichage avec le form
-                break;
             case 'data':
-                console.log(msg.data);
-                document.getElementById('sample').style.opacity = msg.data + "%";
+                document.getElementById("message").innerHTML = "Veuillez vous enregistrer";
+                document.getElementById("badge").innerHTML = msg.data;
+                document.getElementById('registration').style.opacity = "100%";
                 break;
+            case 'user' :
+                document.getElementById("message").innerHTML = "Bienvenue " + msg.data.firstname + " " +  msg.data.lastname;
+                break;
+            case 'ok':
+                document.getElementById("message").innerHTML = "Veuillez scanner";
+                break;
+
+
         }
     }
 
     function register() {
         const firstname = document.getElementById("firstname").value;
         const lastname = document.getElementById("lastname").value;
-        const badge = document.getElementById("badge").value;
+        const badge = document.getElementById("badge").innerHTML;
         const data = {firstname: firstname, lastname: lastname, badge: badge};
         wss.send(JSON.stringify({type: 'registration', data: data}))
-        //TODO cacher le formulaire
+        document.getElementById('registration').style.opacity = "0";
+        document.getElementById("message").innerHTML = "Veuillez scanner";
+
+        document.getElementById("firstname").value = "";
+        document.getElementById("lastname").value = "";
+
     }
 
 
