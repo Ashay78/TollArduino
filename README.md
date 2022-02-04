@@ -35,7 +35,7 @@ La page web permet aux utilisateurs de s'inscrire. Elle permet aussi aux admin d
 
 La base de données mongo est composé de deux tables.
 
-![](img/bdd.png)
+![](img/bdd.jpg)
 
 ## Besoin
 
