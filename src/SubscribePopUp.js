@@ -1,12 +1,8 @@
 
 function SubscribePopUp() {
-    const ws = new WebSocket('ws://localhost:3001');
-
-    ws.onmessage = (event) => {
-        console.log(event)
-    }
-
     function addUser() {
+        const ws = new WebSocket('ws://localhost:3001');
+
         // Add a user to the database
         const firstname = document.getElementById("firstname").value;
         const lastname = document.getElementById("lastname").value;
