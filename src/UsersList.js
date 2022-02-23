@@ -1,7 +1,7 @@
 function UserList(props) {
     return (
         <div className="section">
-            <h1>Utilisateurs inscrit</h1>
+            <h1>Utilisateurs inscrits</h1>
             <div className="item-list">
                 {props.users.map((user) => {
                     return (

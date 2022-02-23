@@ -62,7 +62,7 @@ function App() {
           refresh
         </div>
         <div id="registration-button" onClick={showRegistrationForm}>
-          Inscrire un utilisateur
+          Inscription
         </div>
       </div>
     </div>

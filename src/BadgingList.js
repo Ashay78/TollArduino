@@ -1,7 +1,7 @@
 function BadgingList(props) {
     return (
         <div className="section">
-            <h1>Passage récent</h1>
+            <h1>Passages récents</h1>
             <div className="item-list">
                 {props.badges.map((badge) => {
                     return (

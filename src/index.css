@@ -46,6 +46,31 @@ body {
   margin-top: 100px;
 }
 
+#GraphWeek {
+  margin-top: 30px;
+}
+
+#weeklyStat {
+  display: flex;
+  align-items:flex-end;
+  justify-content: space-around;
+
+  height: 100px;
+  width: 100%;
+}
+
+#weeklyStat > div {
+  width: 12%;
+  height: 50%;
+  display: flex;
+  
+  background-color: #666;
+}
+
+#weeklyStat > div > span{
+  align-self: flex-end;
+}
+
 .item-list {
   max-height: 80%;
   display: flex;
