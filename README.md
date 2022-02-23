@@ -27,7 +27,7 @@ On retourve dans ce dossier le programme arduino. et les librairie pour le capte
 
 Le programme web se situe dans le dossier : ```/src```
 
-La page web permet aux utilisateurs de s'inscrire. Elle permet aussi aux admin d'avoir un retour sous forme de table sur les utilisateurs inscirpt et sur leurs passages. Et d'avoir un retour sous forme de schéma sur les statistiques de ses péages.
+La page web permet aux utilisateurs de s'inscrire. Elle permet aussi aux admin d'avoir un retour sous forme de table sur les utilisateurs inscrit et sur leurs passages. Et d'avoir un retour sous forme de schéma sur les statistiques de ses péages.
 
 ![](img/link.png)
 

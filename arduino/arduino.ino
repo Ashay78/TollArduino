@@ -54,20 +54,19 @@ void loop() {
   int distanceInCm = ultrasonic.Ranging(CM);
 
   if (goForward) {
-      while(distanceInCm < 20) {
-        distanceInCm = ultrasonic.Ranging(CM);
-        digitalWrite(GREEN_LED, HIGH);
-        digitalWrite(RED_LED, LOW);
-      }
-      if (distanceInCm > 20) {
-        goForward = false;
-        Serial.println("ok");
-      }
-     
-    } else {
-      digitalWrite(GREEN_LED, LOW);
-      digitalWrite(RED_LED, HIGH);
+    while(distanceInCm < 20) {
+      distanceInCm = ultrasonic.Ranging(CM);
+      digitalWrite(GREEN_LED, HIGH);
+      digitalWrite(RED_LED, LOW);
     }
+    if (distanceInCm > 20) {
+      goForward = false;
+      Serial.println("ok");
+    }
+  } else {
+    digitalWrite(GREEN_LED, LOW);
+    digitalWrite(RED_LED, HIGH);
+  }
  
    
   // Initialisé la boucle si aucun badge n'est présent 
