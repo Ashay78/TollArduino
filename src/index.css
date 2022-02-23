@@ -87,3 +87,20 @@ body {
   -webkit-box-shadow: 0px 4px 7px 0px rgba(0,0,0,0.56); 
   box-shadow: 0px 4px 7px 0px rgba(0,0,0,0.56);
 }
+
+#debug-buttons {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  cursor: pointer;
+
+  border-radius: 0 0 8px 0;
+  -webkit-box-shadow: 0px 4px 7px 0px rgba(0,0,0,0.56); 
+  box-shadow: 0px 4px 7px 0px rgba(0,0,0,0.56);
+  padding:4px;
+}
+
+#registration-button {
+  border-top: #000 1px;
+}
