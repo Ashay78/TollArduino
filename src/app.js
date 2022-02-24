@@ -6,6 +6,7 @@ import React, { useState } from "react";
 function App() {
   const [badges, setBadges] = useState([])
   const [users, setUsers] = useState([])
+  const [weeklyStat, setWeeklyStat] = useState([])
 
   function refreshData() {
     const ws = new WebSocket('ws://localhost:3001');
@@ -32,7 +33,7 @@ function App() {
         else
           document.getElementById('registration-popup').style.display = 'none';
       }
-      else if (dataObject.type == "changeState") {
+      else if (dataObject.type == 'changeState') {
         if (dataObject.data == "red") {
           document.getElementById('status').classList.remove('green')
           document.getElementById('status').classList.add('red')
@@ -41,6 +42,9 @@ function App() {
           document.getElementById('status').classList.add('green')
         }
       }
+      else if (dataObject.type == 'weeklyStat'){
+        setWeeklyStat(dataObject.data);
+      }
     } 
   }
 
@@ -48,18 +52,18 @@ function App() {
     document.getElementById('registration-popup').style.display = 'flex';
   }
 
-  document.onreadystatechange = ev => {
+  document.onreadystatechange = _ => {
     refreshData();
   }
 
   return (
     <div className="container">
-      <TollArduinoStatus />
+      <TollArduinoStatus nbPassage24h={badges.length} weeklyStat={weeklyStat}/>
       <UserList users={users} />
       <BadgingList badges={badges} />
       <div id='debug-buttons'>
         <div id="refresh-button" onClick={refreshData}>
-          refresh
+          Refresh
         </div>
         <div id="registration-button" onClick={showRegistrationForm}>
           Inscription

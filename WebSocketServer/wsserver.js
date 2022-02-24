@@ -1,9 +1,11 @@
+const moment = require('moment');
+
 // ######################
 // Import Mongoose Models
 // ######################
 const mongooseLoader = require('./Loader/mongo.js');
-const {User} = require("./Models/User");
-const {Badging} = require("./Models/badging");
+const { User } = require("./Models/User");
+const { Badging } = require("./Models/badging");
 mongooseLoader();
 
 // #####################
@@ -39,13 +41,37 @@ wss.on('connection', function (client) {
                 //portSerial.write("1");
                 break;
             case 'informationRequest':
-                console.log('New information request')
                 User.find().then(users => {
-                    client.send(JSON.stringify({ type: 'users', data: users}));
+                    client.send(JSON.stringify({ type: 'users', data: users }));
                 });
-                Badging.find().then(badgings => {
-                    client.send(JSON.stringify({ type: 'badges', data: badgings}));
-                })
+
+                Badging.find({
+                    'date': {
+                        $gte: moment().subtract(0, 'day').startOf('day'),
+                        $lte: moment().subtract(0, 'day').endOf('day')
+                    }
+                }).then(badgings => {
+                    client.send(JSON.stringify({ type: 'badges', data: badgings }));
+                });
+
+                var weeklyStat = []
+                for(let i = 7; i >= 0; i--){
+                    Badging.count({
+                        'date': {
+                            $gte: moment().subtract(i, 'day').startOf('day'),
+                            $lte: moment().subtract(i, 'day').endOf('day')
+                        }
+                    }).then(count => {
+                        weeklyStat[6-i] = count;
+                        if(!weeklyStat.includes(null)){
+                            client.send(JSON.stringify({
+                                type: 'weeklyStat', data: weeklyStat
+                            }));
+                        }
+                    })
+                }
+                
+                break;
         }
     };
 });
