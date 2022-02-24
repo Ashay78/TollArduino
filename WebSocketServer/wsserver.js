@@ -37,44 +37,53 @@ wss.on('connection', function (client) {
                 let badging = new Badging({
                     user: user
                 })
-                badging.save();
-                //portSerial.write("1");
+                badging.save().then(elem => {
+                    wss.clients.forEach(function each(client) {
+                        sendInformation(client);
+                        client.send(JSON.stringify({ type: 'changeState', data: 'green' }));
+                    });
+                    portSerial.write("1");
+
+                });
                 break;
             case 'informationRequest':
-                User.find().then(users => {
-                    client.send(JSON.stringify({ type: 'users', data: users }));
-                });
-
-                Badging.find({
-                    'date': {
-                        $gte: moment().subtract(0, 'day').startOf('day'),
-                        $lte: moment().subtract(0, 'day').endOf('day')
-                    }
-                }).then(badgings => {
-                    client.send(JSON.stringify({ type: 'badges', data: badgings }));
-                });
-
-                var weeklyStat = []
-                for(let i = 7; i >= 0; i--){
-                    Badging.count({
-                        'date': {
-                            $gte: moment().subtract(i, 'day').startOf('day'),
-                            $lte: moment().subtract(i, 'day').endOf('day')
-                        }
-                    }).then(count => {
-                        weeklyStat[6-i] = count;
-                        if(!weeklyStat.includes(null)){
-                            client.send(JSON.stringify({
-                                type: 'weeklyStat', data: weeklyStat
-                            }));
-                        }
-                    })
-                }
-                
+                sendInformation(client);
                 break;
         }
     };
 });
+
+function sendInformation(client) {
+    User.find().then(users => {
+        client.send(JSON.stringify({ type: 'users', data: users }));
+    });
+
+    Badging.find({
+        'date': {
+            $gte: moment().subtract(0, 'day').startOf('day'),
+            $lte: moment().subtract(0, 'day').endOf('day')
+        }
+    }).then(badgings => {
+        client.send(JSON.stringify({ type: 'badges', data: badgings }));
+    });
+
+    var weeklyStat = []
+    for(let i = 7; i >= 0; i--){
+        Badging.count({
+            'date': {
+                $gte: moment().subtract(i, 'day').startOf('day'),
+                $lte: moment().subtract(i, 'day').endOf('day')
+            }
+        }).then(count => {
+            weeklyStat[6-i] = count;
+            if(!weeklyStat.includes(null)){
+                client.send(JSON.stringify({
+                    type: 'weeklyStat', data: weeklyStat
+                }));
+            }
+        })
+    }
+}
 
 // ##############################
 // Init transactions with arduino
@@ -85,10 +94,20 @@ const parser = new parsers.Readline({
     delimiter: '\r\n'
 });
 
+const portSerial = new SerialPort('/dev/cu.usbmodem11401',{
+    baudRate: 9600,
+    dataBits: 8,
+    parity: 'none',
+    stopBits: 1,
+    flowControl: false
+});
+
+portSerial.pipe(parser);
+
 parser.on('data', function (data) {
     if (data.includes('ok')) {
         wss.clients.forEach(function each(client) {
-            client.send(JSON.stringify({ type: 'ok' }));
+            client.send(JSON.stringify({ type: 'changeState', data: 'red' }));
         });
         return;
     }
@@ -97,30 +116,24 @@ parser.on('data', function (data) {
     User.findOne({ badge: badge }).then(user => {
         if (user === null) {
             wss.clients.forEach(function each(client) {
-                client.send(JSON.stringify({ type: 'data', data: badge }));
+                client.send(JSON.stringify({ type: 'registrationNeeded', data: badge }));
             });
         } else {
-            wss.clients.forEach(function each(client) {
-                client.send(JSON.stringify({ type: 'user', data: user }));
-            });
             let badging = new Badging({
                 user: user
             });
-            badging.save();
-            //portSerial.write("1");
+            badging.save().then(elem => {
+                wss.clients.forEach(function each(client) {
+                    sendInformation(client);
+                    client.send(JSON.stringify({ type: 'changeState', data: 'green' }));
+                });
+                portSerial.write("1");
+            });
         }
     })
 });
 
-// const portSerial = new SerialPort('/dev/cu.usbmodem11401',{
-//     baudRate: 9600,
-//     dataBits: 8,
-//     parity: 'none',
-//     stopBits: 1,
-//     flowControl: false
-// });
 
-// portSerial.pipe(parser);
 
 server.listen(port);
 console.log(`Listening on port ${port}`);

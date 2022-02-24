@@ -24,20 +24,20 @@ function App() {
         setUsers(dataObject.data);
       }
       else if (dataObject.type == "registrationNeeded") {
-        console.log(dataObject);
-
         if (true/* Todo : if registration needed*/){
           document.getElementById('registration-popup').style.display = 'flex';
-          // + Add the badge id
+          document.getElementById('badge').value = dataObject.data;
         }
         else
           document.getElementById('registration-popup').style.display = 'none';
       }
       else if (dataObject.type == 'changeState') {
+        console.log('la')
         if (dataObject.data == "red") {
           document.getElementById('status').classList.remove('green')
           document.getElementById('status').classList.add('red')
         } else {
+          console.log('ici')
           document.getElementById('status').classList.remove('red')
           document.getElementById('status').classList.add('green')
         }

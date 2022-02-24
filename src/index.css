@@ -32,9 +32,15 @@ body {
   text-align: center;
 }
 
-#status {
+.red {
   background-color: #A22;
+}
 
+.green {
+  background-color: green;
+}
+
+#status {
   width: 150px;
   height: 150px;
   border-radius: 50%;

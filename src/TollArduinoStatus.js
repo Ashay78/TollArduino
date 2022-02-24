@@ -10,7 +10,7 @@ function TollArduinoStatus(props) {
         <div className="section">
             <h1>Status</h1>
             <div>
-                <div id="status">
+                <div id="status" className="red">
                 </div>
                 <h3 className="center">Fermé</h3>
             </div>

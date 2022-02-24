@@ -55,6 +55,7 @@ void loop() {
 
   if (goForward) {
     while(distanceInCm < 20) {
+      
       distanceInCm = ultrasonic.Ranging(CM);
       digitalWrite(GREEN_LED, HIGH);
       digitalWrite(RED_LED, LOW);

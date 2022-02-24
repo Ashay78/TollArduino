@@ -3,6 +3,7 @@ function SubscribePopUp() {
     function addUser() {
         const ws = new WebSocket('ws://localhost:3001');
 
+
         // Add a user to the database
         const firstname = document.getElementById("firstname").value;
         const lastname = document.getElementById("lastname").value;
@@ -16,6 +17,7 @@ function SubscribePopUp() {
         document.getElementById("firstname").value = "";
         document.getElementById("lastname").value = "";
         document.getElementById("badge").value = "";
+        document.getElementById('registration-popup').style.display = 'none';
     }
 
     function hidePopUp() { 
